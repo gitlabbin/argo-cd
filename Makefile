@@ -9,7 +9,8 @@ GEN_RESOURCES_CLI_NAME=argocd-resources-gen
 HOST_OS:=$(shell go env GOOS)
 HOST_ARCH:=$(shell go env GOARCH)
 
-TARGET_ARCH?=linux/amd64
+#TARGET_ARCH?=linux/amd64
+TARGET_ARCH?=linux/aarch64
 
 VERSION=$(shell cat ${CURRENT_DIR}/VERSION)
 BUILD_DATE:=$(if $(BUILD_DATE),$(BUILD_DATE),$(shell date -u +'%Y-%m-%dT%H:%M:%SZ'))
