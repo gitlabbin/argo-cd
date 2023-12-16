@@ -40,7 +40,7 @@ function selectOption(name: string, label: string, defaultVal: string, values: s
     );
 }
 
-function booleanOption(name: string, label: string, defaultVal: boolean, props: ApplicationSyncOptionProps, invert: boolean, warning: string = null) {
+function booleanOption(name: string, label: string, defaultVal: boolean, props: ApplicationSyncOptionProps, invert: boolean, warning: string = null, disabled: boolean = false) {
     const options = [...(props.options || [])];
     const prefix = `${name}=`;
     const index = options.findIndex(item => item.startsWith(prefix));
@@ -50,6 +50,7 @@ function booleanOption(name: string, label: string, defaultVal: boolean, props: 
             <Checkbox
                 id={`sync-option-${name}-${props.id}`}
                 checked={checked}
+                disabled={disabled}
                 onChange={(val: boolean) => {
                     if (index < 0) {
                         props.onChanged(options.concat(`${name}=${invert ? !val : val}`));
@@ -96,6 +97,13 @@ const syncOptions: Array<(props: ApplicationSyncOptionProps) => React.ReactNode>
     props => selectOption('PrunePropagationPolicy', 'Prune Propagation Policy', 'foreground', ['foreground', 'background', 'orphan'], props)
 ];
 
+const syncFlagOptions: Array<(props: ApplicationSyncOptionProps) => React.ReactNode> = [
+    props => booleanOption('Prune', 'Prune', false, props, true, null, false),
+    props => booleanOption('DryRun', 'Dry Run', false, props, false, null, false),
+    props => booleanOption('ApplyOnly', 'Apply Only', false, props, false, null, false),
+    props => booleanOption('Force', 'Force', false, props, false, null, true)
+];
+
 const optionStyle = {marginTop: '0.5em'};
 
 export const ApplicationSyncOptions = (props: ApplicationSyncOptionProps) => (
@@ -116,7 +124,22 @@ export const ApplicationSyncOptions = (props: ApplicationSyncOptionProps) => (
     </div>
 );
 
-export const ApplicationManualSyncFlags = ReactForm.FormField((props: {fieldApi: ReactForm.FieldApi; id?: string}) => {
+export const ApplicationManualSyncFlags = (props: ApplicationSyncOptionProps) => (
+    <div className='row application-sync-options'>
+        {syncFlagOptions.map((render, i) => (
+            <div
+                key={i}
+                style={optionStyle}
+                className={classNames('small-12', {
+                    'large-6': i < syncOptions.length - 1
+                })}>
+                {render(props)}
+            </div>
+        ))}
+    </div>
+);
+
+export const ApplicationManualSyncFlagsOld = ReactForm.FormField((props: {fieldApi: ReactForm.FieldApi; id?: string}) => {
     const {
         fieldApi: {getValue, setValue, setTouched}
     } = props;
@@ -150,6 +173,26 @@ export const ApplicationSyncOptionsField = ReactForm.FormField((props: {fieldApi
     return (
         <div className='argo-field' style={{borderBottom: '0'}}>
             <ApplicationSyncOptions
+                options={val}
+                onChanged={opts => {
+                    setTouched(true);
+                    setValue(opts);
+                }}
+            />
+        </div>
+    );
+});
+
+// ApplicationSyncOptions
+// ApplicationManualSyncFlags
+export const ApplicationManualSyncFlagsField = ReactForm.FormField((props: {fieldApi: ReactForm.FieldApi}) => {
+    const {
+        fieldApi: {getValue, setValue, setTouched}
+    } = props;
+    const val = getValue() || [];
+    return (
+        <div className='argo-field' style={{borderBottom: '0'}}>
+            <ApplicationManualSyncFlags
                 options={val}
                 onChanged={opts => {
                     setTouched(true);

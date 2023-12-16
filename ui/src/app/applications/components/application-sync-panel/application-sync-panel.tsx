@@ -7,7 +7,7 @@ import {Consumer} from '../../../shared/context';
 import * as models from '../../../shared/models';
 import {services} from '../../../shared/services';
 import {ApplicationRetryOptions} from '../application-retry-options/application-retry-options';
-import {ApplicationManualSyncFlags, ApplicationSyncOptions, FORCE_WARNING, SyncFlags, REPLACE_WARNING} from '../application-sync-options/application-sync-options';
+import {FORCE_WARNING, SyncFlags, REPLACE_WARNING, ApplicationManualSyncFlagsField, ApplicationSyncOptions} from '../application-sync-options/application-sync-options';
 import {ComparisonStatusIcon, getAppDefaultSource, nodeKey} from '../utils';
 
 import './application-sync-panel.scss';
@@ -128,7 +128,7 @@ export const ApplicationSyncPanel = ({application, selectedResource, hide}: {app
 
                                     <div className='argo-form-row'>
                                         <div style={{marginBottom: '1em'}}>
-                                            <FormField formApi={formApi} field='syncFlags' component={ApplicationManualSyncFlags} />
+                                            <FormField formApi={formApi} field='syncFlags' component={ApplicationManualSyncFlagsField} />
                                         </div>
                                         <div style={{marginBottom: '1em'}}>
                                             <label>Sync Options</label>
