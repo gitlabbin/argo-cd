@@ -119,7 +119,7 @@ export const ApplicationSyncOptions = (props: ApplicationSyncOptionProps) => (
             </div>
         ))}
         <div className='small-12' style={optionStyle}>
-            {booleanOption('Replace', 'Replace', false, props, false, REPLACE_WARNING)}
+            {booleanOption('Replace', 'Replace', false, props, false, REPLACE_WARNING, true)}
         </div>
     </div>
 );
