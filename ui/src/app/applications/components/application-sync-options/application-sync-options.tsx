@@ -40,7 +40,7 @@ function selectOption(name: string, label: string, defaultVal: string, values: s
     );
 }
 
-function booleanOption(name: string, label: string, defaultVal: boolean, props: ApplicationSyncOptionProps, invert: boolean, warning: string = null) {
+function booleanOption(name: string, label: string, defaultVal: boolean, props: ApplicationSyncOptionProps, invert: boolean, warning: string = null, disabled: boolean = false) {
     const options = [...(props.options || [])];
     const prefix = `${name}=`;
     const index = options.findIndex(item => item.startsWith(prefix));
@@ -50,6 +50,7 @@ function booleanOption(name: string, label: string, defaultVal: boolean, props: 
             <Checkbox
                 id={`sync-option-${name}-${props.id}`}
                 checked={checked}
+                disabled={disabled}
                 onChange={(val: boolean) => {
                     if (index < 0) {
                         props.onChanged(options.concat(`${name}=${invert ? !val : val}`));
@@ -77,6 +78,13 @@ enum ManualSyncFlags {
     DryRun = 'Dry Run',
     ApplyOnly = 'Apply Only',
     Force = 'Force'
+}
+
+enum ManualSyncFlagsDisabler {
+    Prune = 0,
+    DryRun = 0,
+    ApplyOnly = 0,
+    Force = 1
 }
 
 export interface SyncFlags {
@@ -111,7 +119,7 @@ export const ApplicationSyncOptions = (props: ApplicationSyncOptionProps) => (
             </div>
         ))}
         <div className='small-12' style={optionStyle}>
-            {booleanOption('Replace', 'Replace', false, props, false, REPLACE_WARNING)}
+            {booleanOption('Replace', 'Replace', false, props, false, REPLACE_WARNING, true)}
         </div>
     </div>
 );
@@ -128,6 +136,7 @@ export const ApplicationManualSyncFlags = ReactForm.FormField((props: {fieldApi:
                     <Checkbox
                         id={`sync-option-${flag}-${props.id}`}
                         checked={val[flag]}
+                        disabled={!!ManualSyncFlagsDisabler[flag as keyof typeof ManualSyncFlagsDisabler]}
                         onChange={(newVal: boolean) => {
                             setTouched(true);
                             const update = {...val};
